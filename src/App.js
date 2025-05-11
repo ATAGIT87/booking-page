@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 import React, { useState } from "react";
 import AWS from "aws-sdk";
 import * as XLSX from "xlsx";
@@ -12,6 +14,11 @@ const awsConfig = {
   region: process.env.REACT_APP_AWS_REGION,
   s3BucketName: process.env.REACT_APP_S3_BUCKET_NAME,
 };
+
+console.log("AWS Access Key:", process.env.REACT_APP_AWS_ACCESS_KEY_ID);
+console.log("AWS Secret Key:", process.env.REACT_APP_AWS_SECRET_ACCESS_KEY);
+console.log("AWS Region:", process.env.REACT_APP_AWS_REGION);
+console.log("S3 Bucket Name:", process.env.REACT_APP_S3_BUCKET_NAME);
 
 AWS.config.update(awsConfig);
 
