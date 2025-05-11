@@ -1,5 +1,3 @@
-require('dotenv').config();
-
 import React, { useState } from "react";
 import AWS from "aws-sdk";
 import * as XLSX from "xlsx";
