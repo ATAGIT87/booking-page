@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { Button } from 'react-bootstrap'; // می‌تونی از هر کتابخانه‌ای استفاده کنی که نیاز داری.
 
 const services = ['کوتاهی مو', 'رنگ مو', 'تتو'];
-const staff = ['زهرا طباطبایی', 'نسرین طباطبایی'];
+const staff = ['نسین تواتبایی', 'زهره تواتبایی', 'شهایق تواتبایی'];
 
 function BookingPage() {
   const [service, setService] = useState('');
@@ -39,7 +38,7 @@ function BookingPage() {
         <input type="date" value={date} onChange={e => setDate(e.target.value)} />
         <input type="time" value={time} onChange={e => setTime(e.target.value)} />
       </div>
-      <Button onClick={handleSubmit}>ثبت نوبت</Button>
+      <button onClick={handleSubmit}>ثبت نوبت</button>
     </div>
   );
 }
