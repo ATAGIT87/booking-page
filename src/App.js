@@ -73,6 +73,9 @@ function BookingPage() {
         ContentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       };
 
+      // چاپ محتویات ورک‌بوک قبل از آپلود برای بررسی
+      console.log("محتویات نهایی ورک‌بوک پیش از آپلود:", workbook);
+
       await s3.upload(uploadParams).promise();
       console.log("فایل Excel به‌روزرسانی شد.");
     } catch (err) {
