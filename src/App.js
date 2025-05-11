@@ -1,5 +1,9 @@
 import React, { useState } from "react";
 import AWS from "aws-sdk";
+import XLSX from "xlsx";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const services = ["کوتاهی مو", "رنگ مو", "تتو"];
 const staff = ["نسین تواتبایی", "زهره تواتبایی", "شهایق تواتبایی"];
@@ -13,13 +17,61 @@ const awsConfig = {
 AWS.config.update(awsConfig);
 
 const s3 = new AWS.S3();
-const bucketName = "booking-data-khoshchehre";
+const bucketName = process.env.REACT_APP_S3_BUCKET_NAME;
+const excelFileName = "booking-data.xlsx";
 
 function BookingPage() {
   const [service, setService] = useState("");
   const [staffMember, setStaffMember] = useState("");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
+
+  const createOrUpdateExcel = async (data) => {
+    try {
+      // دانلود فایل Excel از S3
+      let fileData;
+      try {
+        const response = await s3
+          .getObject({ Bucket: bucketName, Key: excelFileName })
+          .promise();
+        fileData = response.Body;
+      } catch (err) {
+        console.log("فایل Excel یافت نشد. فایل جدید ایجاد می‌شود.");
+      }
+
+      // ایجاد ورک بوک
+      let workbook;
+      if (fileData) {
+        const fileBuffer = new Uint8Array(fileData);
+        workbook = XLSX.read(fileBuffer, { type: "array" });
+      } else {
+        workbook = XLSX.utils.book_new();
+      }
+
+      // اضافه کردن داده جدید
+      const sheetName = "Booking Data";
+      const worksheet = workbook.Sheets[sheetName] || XLSX.utils.aoa_to_sheet([["Service", "Staff", "Date", "Time"]]);
+      const newRow = [data.service, data.staffMember, data.date, data.time];
+      XLSX.utils.sheet_add_aoa(worksheet, [newRow], { origin: -1 });
+      workbook.Sheets[sheetName] = worksheet;
+
+      // تبدیل به باینری
+      const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+
+      // آپلود فایل به S3
+      const uploadParams = {
+        Bucket: bucketName,
+        Key: excelFileName,
+        Body: Buffer.from(excelBuffer),
+        ContentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      };
+
+      await s3.upload(uploadParams).promise();
+      console.log("فایل Excel به‌روزرسانی شد.");
+    } catch (err) {
+      console.error("خطا در ایجاد یا آپدیت فایل Excel:", err);
+    }
+  };
 
   const handleSubmit = async () => {
     const bookingData = {
@@ -29,19 +81,11 @@ function BookingPage() {
       time,
     };
 
-    const fileName = `booking-${Date.now()}.json`;
-    const params = {
-      Bucket: bucketName,
-      Key: fileName,
-      Body: JSON.stringify(bookingData),
-      ContentType: "application/json",
-    };
-
     try {
-      await s3.upload(params).promise();
+      await createOrUpdateExcel(bookingData);
       alert("نوبت شما ثبت شد و در S3 ذخیره شد!");
     } catch (err) {
-      console.error("خطا در آپلود به S3:", err);
+      console.error("خطا در ثبت نوبت:", err);
       alert("مشکلی در ثبت نوبت به وجود آمد.");
     }
   };
