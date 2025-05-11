@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import AWS from "aws-sdk";
 import * as XLSX from "xlsx";
 
-
 const services = ["کوتاهی مو", "رنگ مو", "تتو"];
 const staff = ["نسین تواتبایی", "زهره تواتبایی", "شهایق تواتبایی"];
 
@@ -10,7 +9,7 @@ const awsConfig = {
   accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
   secretAccessKey: process.env.REACT_APP_AWS_SECRET_ACCESS_KEY,
   region: process.env.REACT_APP_AWS_REGION,
-   s3BucketName : process.env.REACT_APP_S3_BUCKET_NAME
+  s3BucketName: process.env.REACT_APP_S3_BUCKET_NAME,
 };
 
 AWS.config.update(awsConfig);
@@ -27,8 +26,8 @@ function BookingPage() {
 
   const createOrUpdateExcel = async (data) => {
     try {
-      // دانلود فایل Excel از S3
       let fileData;
+      // دانلود فایل Excel از S3
       try {
         const response = await s3
           .getObject({ Bucket: bucketName, Key: excelFileName })
@@ -49,10 +48,15 @@ function BookingPage() {
 
       // اضافه کردن داده جدید
       const sheetName = "Booking Data";
-      const worksheet = workbook.Sheets[sheetName] || XLSX.utils.aoa_to_sheet([["Service", "Staff", "Date", "Time"]]);
+      let worksheet = workbook.Sheets[sheetName];
+      if (!worksheet) {
+        // اگر شیت "Booking Data" وجود ندارد، آن را ایجاد کن
+        worksheet = XLSX.utils.aoa_to_sheet([["Service", "Staff", "Date", "Time"]]);
+        workbook.Sheets[sheetName] = worksheet;
+      }
+
       const newRow = [data.service, data.staffMember, data.date, data.time];
       XLSX.utils.sheet_add_aoa(worksheet, [newRow], { origin: -1 });
-      workbook.Sheets[sheetName] = worksheet;
 
       // تبدیل به باینری
       const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
@@ -96,21 +100,36 @@ function BookingPage() {
         <select onChange={(e) => setService(e.target.value)} value={service}>
           <option value="">انتخاب نوع خدمت</option>
           {services.map((service) => (
-            <option key={service} value={service}>{service}</option>
+            <option key={service} value={service}>
+              {service}
+            </option>
           ))}
         </select>
       </div>
       <div>
-        <select onChange={(e) => setStaffMember(e.target.value)} value={staffMember}>
+        <select
+          onChange={(e) => setStaffMember(e.target.value)}
+          value={staffMember}
+        >
           <option value="">انتخاب فرد</option>
           {staff.map((member) => (
-            <option key={member} value={member}>{member}</option>
+            <option key={member} value={member}>
+              {member}
+            </option>
           ))}
         </select>
       </div>
       <div>
-        <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
-        <input type="time" value={time} onChange={(e) => setTime(e.target.value)} />
+        <input
+          type="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+        />
+        <input
+          type="time"
+          value={time}
+          onChange={(e) => setTime(e.target.value)}
+        />
       </div>
       <button onClick={handleSubmit}>ثبت نوبت</button>
     </div>
