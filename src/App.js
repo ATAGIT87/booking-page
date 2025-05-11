@@ -5,11 +5,12 @@ import * as XLSX from "xlsx";
 const services = ["کوتاهی مو", "رنگ مو", "تتو"];
 const staff = ["نسین تواتبایی", "زهره تواتبایی", "شهایق تواتبایی"];
 
+
 const awsConfig = {
-  accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.REACT_APP_AWS_SECRET_ACCESS_KEY,
-  region: process.env.REACT_APP_AWS_REGION,
-  s3BucketName: process.env.REACT_APP_S3_BUCKET_NAME,
+  accessKeyId:'s3-access-user',
+  secretAccessKey: 'ez#Hbt5&',
+  region: 'us-east-1',
+  s3BucketName: 'booking-data-khoshchehre',
 };
 
 AWS.config.update(awsConfig);
