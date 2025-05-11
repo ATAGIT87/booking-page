@@ -37,7 +37,7 @@ function BookingPage() {
         console.log("فایل Excel یافت نشد. فایل جدید ایجاد می‌شود.");
       }
 
-      // ایجاد ورک بوک
+      // ایجاد ورک‌بوک
       let workbook;
       if (fileData) {
         const fileBuffer = new Uint8Array(fileData);
@@ -57,6 +57,9 @@ function BookingPage() {
 
       const newRow = [data.service, data.staffMember, data.date, data.time];
       XLSX.utils.sheet_add_aoa(worksheet, [newRow], { origin: -1 });
+
+      // بررسی مقدار ورک‌بوک قبل از آپلود
+      console.log("محتویات ورک‌بوک:", workbook);
 
       // تبدیل به باینری
       const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
