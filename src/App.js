@@ -52,20 +52,22 @@ function BookingPage() {
       let worksheet = workbook.Sheets[sheetName];
       if (!worksheet) {
         // اگر شیت "Booking Data" وجود ندارد، آن را ایجاد کن
-        worksheet = XLSX.utils.aoa_to_sheet([["Service", "Staff", "Date", "Time"]]);
-        workbook.Sheets[sheetName] = worksheet;
+        const headers = [["Service", "Staff", "Date", "Time"]];
+        worksheet = XLSX.utils.aoa_to_sheet(headers);
+        XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
       }
 
       // اضافه کردن ردیف جدید
       const newRow = [data.service, data.staffMember, data.date, data.time];
       XLSX.utils.sheet_add_aoa(worksheet, [newRow], { origin: -1 });
 
+      console.log("محتویات شیت:", XLSX.utils.sheet_to_json(worksheet, { header: 1 }));
       // بررسی محتویات ورک‌بوک
       console.log("محتویات ورک‌بوک بعد از اضافه کردن داده:", workbook);
 
+      console.log("داده‌های شیت قبل از نوشتن:", XLSX.utils.sheet_to_json(worksheet, { header: 1 }));
       // تبدیل ورک‌بوک به باینری
       const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
-
       // آپلود فایل به S3
       const uploadParams = {
         Bucket: bucketName,
