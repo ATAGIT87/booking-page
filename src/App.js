@@ -7,10 +7,10 @@ const staff = ["نسین تواتبایی", "زهره تواتبایی", "شها
 
 
 const awsConfig = {
-  accessKeyId:'s3-access-user',
-  secretAccessKey: 'ez#Hbt5&',
-  region: 'us-east-1',
-  s3BucketName: 'booking-data-khoshchehre',
+  accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.REACT_APP_AWS_SECRET_ACCESS_KEY,
+  region: process.env.REACT_APP_AWS_REGION,
+  s3BucketName: process.env.REACT_APP_S3_BUCKET_NAME,
 };
 
 AWS.config.update(awsConfig);
@@ -68,19 +68,22 @@ function BookingPage() {
       console.log("داده‌های شیت قبل از نوشتن:", XLSX.utils.sheet_to_json(worksheet, { header: 1 }));
       // تبدیل ورک‌بوک به باینری
       const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
-      // آپلود فایل به S3
+      const blob = new Blob([excelBuffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      
+      // پارامترهای آپلود
       const uploadParams = {
         Bucket: bucketName,
         Key: excelFileName,
-        Body: Buffer.from(excelBuffer),
+        Body: blob,
         ContentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       };
-
-      // چاپ محتویات ورک‌بوک قبل از آپلود برای بررسی
-      console.log("محتویات نهایی ورک‌بوک پیش از آپلود:", workbook);
-
+      
+      // آپلود فایل
       await s3.upload(uploadParams).promise();
       console.log("فایل Excel به‌روزرسانی شد.");
+      
     } catch (err) {
       console.error("خطا در ایجاد یا آپدیت فایل Excel:", err);
     }
