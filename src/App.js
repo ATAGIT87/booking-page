@@ -1,25 +1,47 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import { Button } from 'react-bootstrap'; // می‌تونی از هر کتابخانه‌ای استفاده کنی که نیاز داری.
 
-function App() {
+const services = ['کوتاهی مو', 'رنگ مو', 'تتو'];
+const staff = ['زهرا طباطبایی', 'نسرین طباطبایی'];
+
+function BookingPage() {
+  const [service, setService] = useState('');
+  const [staffMember, setStaffMember] = useState('');
+  const [date, setDate] = useState('');
+  const [time, setTime] = useState('');
+
+  const handleSubmit = () => {
+    const bookingData = { service, staffMember, date, time };
+    console.log('Booking Data:', bookingData);
+    alert('نوبت شما ثبت شد!');
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>نوبت‌دهی سالن خوشچهره</h1>
+      <div>
+        <select onChange={e => setService(e.target.value)} value={service}>
+          <option value="">انتخاب نوع خدمت</option>
+          {services.map((service) => (
+            <option key={service} value={service}>{service}</option>
+          ))}
+        </select>
+      </div>
+      <div>
+        <select onChange={e => setStaffMember(e.target.value)} value={staffMember}>
+          <option value="">انتخاب فرد</option>
+          {staff.map((member) => (
+            <option key={member} value={member}>{member}</option>
+          ))}
+        </select>
+      </div>
+      <div>
+        <input type="date" value={date} onChange={e => setDate(e.target.value)} />
+        <input type="time" value={time} onChange={e => setTime(e.target.value)} />
+      </div>
+      <Button onClick={handleSubmit}>ثبت نوبت</Button>
     </div>
   );
 }
 
-export default App;
+export default BookingPage;
