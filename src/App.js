@@ -16,7 +16,7 @@ const awsConfig = {
 AWS.config.update(awsConfig);
 
 const s3 = new AWS.S3();
-const bucketName = process.env.REACT_APP_S3_BUCKET_NAME;
+const bucketName = 'booking-data-khoshchehre';
 const excelFileName = "booking-data.xlsx";
 
 function BookingPage() {
