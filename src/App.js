@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import AWS from "aws-sdk";
-import XLSX from "xlsx";
-import dotenv from "dotenv";
+import * as XLSX from "xlsx";
 
-dotenv.config();
 
 const services = ["کوتاهی مو", "رنگ مو", "تتو"];
 const staff = ["نسین تواتبایی", "زهره تواتبایی", "شهایق تواتبایی"];
@@ -12,6 +10,7 @@ const awsConfig = {
   accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
   secretAccessKey: process.env.REACT_APP_AWS_SECRET_ACCESS_KEY,
   region: process.env.REACT_APP_AWS_REGION,
+   s3BucketName : process.env.REACT_APP_S3_BUCKET_NAME
 };
 
 AWS.config.update(awsConfig);
