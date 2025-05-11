@@ -55,13 +55,14 @@ function BookingPage() {
         workbook.Sheets[sheetName] = worksheet;
       }
 
+      // اضافه کردن ردیف جدید
       const newRow = [data.service, data.staffMember, data.date, data.time];
       XLSX.utils.sheet_add_aoa(worksheet, [newRow], { origin: -1 });
 
-      // بررسی مقدار ورک‌بوک قبل از آپلود
-      console.log("محتویات ورک‌بوک:", workbook);
+      // بررسی محتویات ورک‌بوک
+      console.log("محتویات ورک‌بوک بعد از اضافه کردن داده:", workbook);
 
-      // تبدیل به باینری
+      // تبدیل ورک‌بوک به باینری
       const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
 
       // آپلود فایل به S3
